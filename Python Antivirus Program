@@ -73,9 +73,7 @@ class SimpleAntivirus:
         print(f"Scan complete. {detected} malicious files detected.")
         self.log(f"Scan complete. {detected} malicious files detected.")
 
-# Example usage
-if __name__ == "__main__":
-    antivirus = SimpleAntivirus()
+
     scan_path = input("Enter directory to scan: ")  # e.g., "C:/test_folder"
     if os.path.exists(scan_path):
         antivirus.scan_directory(scan_path)
