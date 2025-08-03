@@ -1,0 +1,8 @@
+# Example usage
+if __name__ == "__main__":
+    antivirus = SimpleAntivirus()
+    scan_path = input("Enter directory to scan: ")  # e.g., "C:/test_folder"
+    if os.path.exists(scan_path):
+        antivirus.scan_directory(scan_path)
+    else:
+        print("Invalid directory path!")
