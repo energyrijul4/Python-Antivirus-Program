@@ -1,0 +1,83 @@
+import os
+import hashlib
+import shutil
+import datetime
+
+class SimpleAntivirus:
+    def __init__(self):
+        # Sample signature database (SHA256 hashes of known malicious files)
+        self.malware_signatures = [
+            "d41d8cd98f00b204e9800998ecf8427e",  # Example hash (empty file hash for demo)
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"  # Another example hash
+        ]
+        # Quarantine directory
+        self.quarantine_dir = "quarantine"
+        # Log file
+        self.log_file = "antivirus_log.txt"
+        # Create quarantine directory if it doesn't exist
+        if not os.path.exists(self.quarantine_dir):
+            os.makedirs(self.quarantine_dir)
+
+    def calculate_sha256(self, file_path):
+        """Calculate SHA256 hash of a file."""
+        sha256_hash = hashlib.sha256()
+        try:
+            with open(file_path, "rb") as f:
+                # Read file in chunks to handle large files
+                for byte_block in iter(lambda: f.read(4096), b""):
+                    sha256_hash.update(byte_block)
+            return sha256_hash.hexdigest()
+        except Exception as e:
+            self.log(f"Error reading {file_path}: {str(e)}")
+            return None
+
+    def log(self, message):
+        """Log scan activity to a file."""
+        with open(self.log_file, "a") as f:
+            timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            f.write(f"[{timestamp}] {message}\n")
+
+    def quarantine_file(self, file_path):
+        """Move detected malicious file to quarantine."""
+        try:
+            file_name = os.path.basename(file_path)
+            dest_path = os.path.join(self.quarantine_dir, file_name)
+            shutil.move(file_path, dest_path)
+            self.log(f"Moved to quarantine: {file_path} -> {dest_path}")
+            return True
+        except Exception as e:
+            self.log(f"Failed to quarantine {file_path}: {str(e)}")
+            return False
+
+    def scan_directory(self, directory):
+        """Scan all files in the specified directory."""
+        print(f"Scanning directory: {directory}")
+        self.log(f"Starting scan of directory: {directory}")
+        detected = 0
+
+        for root, _, files in os.walk(directory):
+            for file_name in files:
+                file_path = os.path.join(root, file_name)
+                file_hash = self.calculate_sha256(file_path)
+                
+                if file_hash:
+                    print(f"Scanning {file_path} (Hash: {file_hash})")
+                    if file_hash in self.malware_signatures:
+                        print(f"Malware detected: {file_path}")
+                        self.log(f"Malware detected: {file_path} (Hash: {file_hash})")
+                        self.quarantine_file(file_path)
+                        detected += 1
+                    else:
+                        self.log(f"Clean: {file_path} (Hash: {file_hash})")
+        
+        print(f"Scan complete. {detected} malicious files detected.")
+        self.log(f"Scan complete. {detected} malicious files detected.")
+
+# Example usage
+if __name__ == "__main__":
+    antivirus = SimpleAntivirus()
+    scan_path = input("Enter directory to scan: ")  # e.g., "C:/test_folder"
+    if os.path.exists(scan_path):
+        antivirus.scan_directory(scan_path)
+    else:
+        print("Invalid directory path!")
