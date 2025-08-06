@@ -1,0 +1,3 @@
+
+        print(f"Scan complete. {detected} malicious files detected.")
+        self.log(f"Scan complete. {detected} malicious files detected.")
