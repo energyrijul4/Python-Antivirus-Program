@@ -13,7 +13,7 @@ class SimpleAntivirus:
         # Quarantine directory
         self.quarantine_dir = "quarantine"
         # Log file
-        self.log_file = "antivirus_log.txt"
+        self.log_iile = "antivirus_log.txt"
         # Create quarantine directory if it doesn't exist
         if not os.path.exists(self.quarantine_dir):
             os.makedirs(self.quarantine_dir)
