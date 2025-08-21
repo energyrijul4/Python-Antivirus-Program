@@ -1,0 +1,6 @@
+ if file_hash:
+                    print(f"Scanning {file_path} (Hash: {file_hash})")
+                    if file_hash in self.malware_signatures:
+                        print(f"Malware detected: {file_path}")
+                        self.log(f"Malware detected: {file_path} (Hash: {file_hash})")
+                        self.quarantine_file(file_path)
